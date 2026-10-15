@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#164f44">
+  <title>Table & Thyme · Restaurant admin</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#dashboard"><span class="brand-icon">t.</span><span>table & thyme<small>RESTAURANT WORKSPACE</small></span></a>
+    <div class="restaurant"><span class="restaurant-icon">T&T</span><div>Table & Thyme<small>Restaurant administration</small></div><span class="online" title="Demo workspace"></span></div>
+    <div class="nav-caption">WORKSPACE</div>
+    <nav aria-label="Admin sidebar">
+      <a href="#dashboard" data-page="dashboard"><span aria-hidden="true">▦</span> Dashboard</a>
+      <a href="#orders" data-page="orders"><span aria-hidden="true">▤</span> Orders</a>
+      <a href="#items" data-page="items"><span aria-hidden="true">▧</span> Item Board</a>
+      <a href="#tables" data-page="tables"><span aria-hidden="true">▦</span> Table QR <span class="order-badge" id="pending-count" hidden>0</span></a>
+      <a href="#reports" data-page="reports"><span aria-hidden="true">▥</span> Sales reports</a>
+      <a href="#guide" data-page="guide"><span aria-hidden="true">◫</span> User guide</a>
+    </nav>
+    <div class="sidebar-note"><span class="note-mark">✦</span><strong>A little clarity.<br>A better service.</strong><p>Your restaurant’s day,<br>all in one place.</p><span>MADE FOR GOOD HOSPITALITY</span></div>
+    <div class="profile"><span class="avatar">AD</span><div>Admin workspace<small>Local demo · Sample data</small></div></div>
+  </aside>
+  <main>
+    <header class="topbar"><div>Workspace <span>/</span> <strong id="breadcrumb">Dashboard</strong></div><span class="demo-badge"><i></i> Demo workspace</span></header>
+    <div class="page-content">
+      <section class="page-heading"><div><div class="eyebrow">A FRESH LOOK AT YOUR RESTAURANT</div><h1 id="page-title">Dashboard</h1><p id="page-description">Good food. Great service. Here’s how business is looking.</p></div><button class="button primary" id="export-button"><span aria-hidden="true">↓</span> Export CSV</button></section>
+      <div class="order-notification" id="order-notification" role="status" aria-live="polite" hidden></div>
+      <section class="panel live-panel" id="live-panel" aria-labelledby="live-title">
+        <div class="panel-heading"><div><div class="eyebrow">STRAIGHT FROM YOUR TABLES</div><h2 id="live-title">Live table orders</h2><p id="live-status" role="status">Connecting to the restaurant…</p></div><button class="button small" id="refresh-live">Refresh</button></div>
+        <div id="live-orders" class="live-orders"></div>
+      </section>
+      <section id="qr-panel" hidden aria-labelledby="qr-title">
+        <section class="panel seating-panel" aria-labelledby="seating-title">
+          <div class="panel-heading"><div><div class="eyebrow">MAKE ROOM FOR EVERYONE</div><h2 id="seating-title">Tables & seating</h2><p>Add tables, set their seats, or bring tables together for a group.</p></div><button class="button small" id="refresh-tables">Refresh tables</button></div>
+          <div id="seating-summary" class="seating-summary" role="status"></div>
+          <form id="add-table-form" class="add-table-form"><label>Table name<input name="table" placeholder="T5 (or leave blank)" pattern="[Tt][1-9][0-9]{0,3}" maxlength="5" aria-label="New table name"></label><label>Seat capacity<input name="capacity" type="number" min="1" max="30" value="4" required aria-label="New table seat capacity"></label><button class="button primary" type="submit">+ Add table</button></form>
+          <p id="table-message" class="table-message" role="status" aria-live="polite"></p>
+          <div class="seating-grid" id="seating-grid"></div>
+          <div class="join-toolbar"><div><strong id="join-summary">Select two or more tables to join</strong><p>Joined tables keep their QR codes. Their seats are added together.</p></div><button class="button primary" id="join-tables" disabled>Join selected tables</button></div>
+        </section>
+        <div class="qr-intro"><div><div class="eyebrow">YOUR TABLES. ONE SHARED MENU.</div><h2 id="qr-title">A seat at the table.</h2><p>Scan. Choose something lovely. We’ll take it from here.</p></div><button class="button primary" id="print-qrs" disabled>Print table QR cards</button></div>
+        <p class="qr-network" id="qr-network" role="status">Preparing your table links…</p>
+        <div class="qr-grid" id="qr-cards"></div>
+      </section>
+      <section class="filters" id="filter-panel" aria-label="Filter dashboard">
+        <div class="filter-heading"><strong><span aria-hidden="true">☷</span> Filter your view</strong><button class="text-button" id="reset-button">Reset filters</button></div>
+        <form id="filters">
+          <label>Date range<select name="period" id="period"><option value="7">Last 7 days</option><option value="today">Today</option><option value="30">Last 30 days</option><option value="all">All dates</option><option value="custom">Custom range</option></select></label>
+          <label>Location<select name="location"><option value="all">All locations</option><option>Indiranagar</option><option>Koramangala</option><option>Whitefield</option></select></label>
+          <label>Order type<select name="type"><option value="all">All order types</option><option>Dine-in</option><option>Takeaway</option><option>Delivery</option></select></label>
+          <label>Order status<select name="status"><option value="all">All statuses</option><option>Completed</option><option>Preparing</option><option>Pending</option><option>Cancelled</option></select></label>
+          <label>Payment<select name="payment"><option value="all">All payments</option><option>UPI</option><option>Card</option><option>Cash</option></select></label>
+          <label class="search-label">Search orders<input name="search" type="search" placeholder="Order ID or customer…" autocomplete="off"></label>
+          <div id="custom-dates" class="custom-dates" hidden><label>From<input type="date" name="from" aria-label="Start date"></label><label>To<input type="date" name="to" aria-label="End date"></label></div>
+        </form>
+        <p class="filter-error" id="filter-error" role="alert" hidden></p>
+      </section>
+      <div class="results-line" id="results-line" role="status" aria-live="polite"></div>
+      <section class="stats" id="stats" aria-label="Filtered performance"></section>
+      <section class="charts" id="charts">
+        <article class="panel revenue-panel"><div class="panel-heading"><div><h2>Revenue overview</h2><p>Completed orders over your selected period</p></div><span class="legend"><i></i> Revenue</span></div><div id="revenue-chart" class="revenue-chart"></div></article>
+        <article class="panel mix-panel"><div class="panel-heading"><div><h2>Orders by type</h2><p>A closer look at how guests order</p></div></div><div id="order-mix"></div></article>
+      </section>
+      <section class="panel orders-panel" id="orders-panel"><div class="panel-heading"><div><h2 id="table-title">Recent orders</h2><p id="table-description">The latest activity across your restaurant</p></div><label class="sort-label">Sort by <select id="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="highest">Highest amount</option><option value="lowest">Lowest amount</option></select></label></div><div class="table-scroll"><table><thead><tr><th>Order</th><th>Customer</th><th>Location</th><th>Type</th><th>Status</th><th>Payment</th><th class="amount">Amount</th></tr></thead><tbody id="orders-body"></tbody></table></div><div class="table-footer"><span id="page-info"></span><div><button class="button small" id="previous">← Previous</button><button class="button small" id="next">Next →</button></div></div></section>
+      <section class="panel items-panel" id="items-panel" aria-labelledby="items-title">
+        <div class="panel-heading"><div><h2 id="items-title">Item Board</h2><p>Sample menu catalogue · Item filters are separate from order filters</p></div><button class="text-button" id="reset-items">Reset item filters</button></div>
+        <form id="item-filters" class="item-filters" aria-label="Filter menu items">
+          <label>Search items<input type="search" name="search" placeholder="Item name or ID…" autocomplete="off"></label>
+          <label>Category<select name="category"><option value="all">All categories</option><option>Starters</option><option>Main course</option><option>Sides</option><option>Desserts</option><option>Beverages</option></select></label>
+          <label>Availability<select name="availability"><option value="all">All items</option><option value="available">Available</option><option value="unavailable">Unavailable</option></select></label>
+        </form>
+        <div class="table-scroll"><table aria-label="Menu items"><thead><tr><th scope="col">Item ID</th><th scope="col">Item</th><th scope="col">Category</th><th scope="col">Availability</th><th scope="col" class="item-price">Price</th></tr></thead><tbody id="items-body"></tbody></table></div>
+        <div class="table-footer"><span id="item-count" role="status" aria-live="polite"></span><span>Prices in INR</span></div>
+      </section>
+      <section id="guide" class="panel guide" hidden>
+        <div class="eyebrow">WORKSPACE DOCUMENTATION</div><h2>Your dashboard, explained.</h2>
+        <p>This workspace combines sample sales reports with QR orders saved locally from customers. The customer menu uses the Item Board catalogue. It is not connected to an external point-of-sale system.</p>
+        <h3>Find the view you need</h3><p>Use Dashboard for an overview, Orders for the full order table, Item Board for the menu catalogue, and Sales reports for revenue and order mix. Filters remain selected when switching between these pages.</p>
+        <h3>Table capacity and joining</h3><p>Open Table QR → Tables & seating. T1–T4 start with 4 seats each. Add a table with a name such as T5 and its seat capacity, or leave the name blank to use the next number. Save seats updates an existing table. Select two or more separate tables and choose Join selected tables to combine their seating; Separate restores the individual tables. Joining preserves each QR code. New orders show the joined table group and combined seats; previous orders keep their original details. Joining does not combine receipts or payments.</p>
+        <h3>QR ordering</h3><p>Open Table QR to print table cards or download their codes. Every table shares the Item Board menu, with its table name attached to each order. Keep the server running and connect customer phones to the same Wi-Fi. Live table orders appear in their own inbox above the sample order reports. Click Confirm order to send “Order confirmed” to that customer’s menu page. Scanning a code opens the menu; only pressing Place order submits an order. Customers pay at the restaurant.</p>
+        <h3>Filter your restaurant activity</h3><p>Combine date range, location, order type, status, payment method, and customer or order ID search. Every chart, metric, order table, and CSV export uses the same matching orders. Custom dates include both start and end dates. Reset filters restores the last seven days and all locations, types, statuses, and payment methods.</p>
+        <h3>Browse the Item Board</h3><p>The Item Board sits below the order table and also opens from the sidebar, directly below Orders. It lists sample menu items with their category, availability, and price in INR. Search by name, ID, or description, and combine category and availability filters. Reset item filters shows the full menu. Item filters are separate from order filters; menu items do not affect order metrics or the order CSV.</p>
+        <h3>Understand the numbers</h3><p>Revenue and average order value count completed orders only. Total orders includes all matching statuses, including cancelled orders. Completion rate is completed orders divided by all matching orders. Amounts use Indian rupees. The revenue chart groups completed sales by calendar day; order mix includes all matching statuses.</p>
+        <h3>Review and export</h3><p>Sort orders by date or amount and use Previous / Next to page through the results. Export CSV downloads all matching rows in the selected sort order, including rows on other pages. CSV exports include all statuses; use the Completed status filter for completed sales only.</p>
+        <h3>Project documentation</h3><p>See <a href="README.md">README.md</a> for setup, file structure, verification, and the data integration notes.</p>
+      </section>
+      <footer class="page-footer"><span><i></i> Sample data · For demonstration only</span><span>Table & Thyme / Admin</span></footer>
+    </div>
+  </main>
+  <script type="module" src="app.mjs"></script>
+  <script type="module">
+    import('./admin-orders.mjs').then(({ initAdminOrders }) => initAdminOrders({ document, window })).catch(() => {
+      const message = 'The running server is out of date or unavailable. Stop it with Ctrl+C, run npm run dev again, then reload this page.';
+      for (const id of ['live-status', 'qr-network', 'table-message']) document.getElementById(id).textContent = message;
+      document.getElementById('refresh-live').onclick = () => location.reload();
+      document.getElementById('refresh-tables').onclick = () => location.reload();
+    });
+  </script>
+</body>
+</html>

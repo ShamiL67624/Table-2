@@ -1,0 +1,24 @@
+{
+  "name": "table-and-thyme-admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node tests/run.mjs",
+    "test:data": "node tests/dashboard.test.mjs",
+    "test:ui": "node tests/ui.test.mjs",
+    "test:ordering": "node tests/ordering.test.mjs",
+    "qr": "node scripts/export-qr.mjs",
+    "check:qr": "node scripts/check-qr.mjs"
+  },
+  "devDependencies": {
+    "happy-dom": "^21.0.1",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4"
+  }
+}
